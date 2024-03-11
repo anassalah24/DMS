@@ -6,10 +6,13 @@ int main() {
     // Initialize thread-safe queues
     ThreadSafeQueue<cv::Mat> cameraQueue;
     ThreadSafeQueue<cv::Mat> preprocessingQueue;
-    ThreadSafeQueue<cv::Mat> faceDetectionQueue;  // Add a queue for face detection output
+    ThreadSafeQueue<cv::Mat> faceDetectionQueue;  // Queue for face detection output
+    ThreadSafeQueue<cv::Mat> tcpOutputQueue;      // Queue for TCP output, if needed
 
-    // Initialize the DMSManager with all necessary queues
-    DMSManager dmsManager(cameraQueue, preprocessingQueue, faceDetectionQueue);
+    int tcpPort = 12345;  // Define the TCP port for the server
+
+    // Initialize the DMSManager with all necessary queues and the TCP port
+    DMSManager dmsManager(cameraQueue, preprocessingQueue, faceDetectionQueue, tcpOutputQueue, tcpPort);
 
     // Initialize the camera component
     if (!dmsManager.initializeCamera("/dev/video0")) {  // or use a video file path
@@ -17,8 +20,7 @@ int main() {
         return -1;
     }
 
-    // Initialize the face detection component (assuming a method exists in DMSManager)
-    // You'll need to provide paths to the YOLOv3-tiny configuration and weights files
+    // Initialize the face detection component
     if (!dmsManager.initializeFaceDetection("/home/dms/DMS/ModularCode/modelconfigs/face-yolov3-tiny.cfg", "/home/dms/DMS/ModularCode/modelconfigs/face-yolov3-tiny_41000.weights")) {
         std::cerr << "Failed to initialize face detection component." << std::endl;
         return -1;
@@ -30,25 +32,22 @@ int main() {
         return -1;
     }
 
-    // Main loop
+    // Main loop (The display code is commented out; uncomment if needed)
     cv::Mat cameraFrame, preprocessedFrame, faceDetectedFrame;
     while (true) {
-        // Display camera frame
         //if (cameraQueue.tryPop(cameraFrame) && !cameraFrame.empty()) {
         //    cv::imshow("Camera Frame", cameraFrame);
         //}
 
-        // Display preprocessed frame
         //if (preprocessingQueue.tryPop(preprocessedFrame) && !preprocessedFrame.empty()) {
         //    cv::imshow("Processed Frame", preprocessedFrame);
         //}
 
-        // Display face detection output
-        if (faceDetectionQueue.tryPop(faceDetectedFrame) && !faceDetectedFrame.empty()) {
-            cv::imshow("Face Detection", faceDetectedFrame);
-        }
+        //if (faceDetectionQueue.tryPop(faceDetectedFrame) && !faceDetectedFrame.empty()) {
+        //    cv::imshow("Face Detection", faceDetectedFrame);
+        //}
 
-        if (cv::waitKey(1) == 27) break;  // Exit on ESC key
+        //if (cv::waitKey(1) == 27) break;  // Exit on ESC key
     }
 
     // Shutdown the system
