@@ -21,7 +21,7 @@ int main() {
     }
 
     // Initialize the face detection component
-    if (!dmsManager.initializeFaceDetection("/home/dms/DMS/ModularCode/modelconfigs/face-yolov3-tiny.cfg", "/home/dms/DMS/ModularCode/modelconfigs/face-yolov3-tiny_41000.weights")) {
+    if (!dmsManager.initializeFaceDetection("/home/anas/DMS-main/ModularCode/modelconfigs/face-yolov3-tiny.cfg", "/home/anas/DMS-main/ModularCode/modelconfigs/face-yolov3-tiny_41000.weights")) {
         std::cerr << "Failed to initialize face detection component." << std::endl;
         return -1;
     }

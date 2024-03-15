@@ -62,6 +62,8 @@ void CommTCPComponent::serverLoop() {
     close(serverFd);
 }
 
+//----------------------------------connection check----------------------------------------------
+
 //void CommTCPComponent::handleClient(int clientSocket) {
     // Simulate some processing time
 //    std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -69,6 +71,8 @@ void CommTCPComponent::serverLoop() {
 //    std::cout << "Closing client connection: socket FD " << clientSocket << std::endl;
 //    close(clientSocket);
 //}
+
+//----------------------------------echo check----------------------------------------------
 
 //void CommTCPComponent::handleClient(int clientSocket) {
 //    char buffer[1024] = {0};
@@ -80,44 +84,65 @@ void CommTCPComponent::serverLoop() {
 
 //    close(clientSocket);
 //}
+
+//----------------------------------commands check----------------------------------------------
+
 //void CommTCPComponent::handleClient(int clientSocket) {
-    //char buffer[1024] = {0};
-    //ssize_t bytesRead;
+//    char buffer[1024] = {0};
+//    ssize_t bytesRead;
 
-    //while ((bytesRead = recv(clientSocket, buffer, 1024, 0)) > 0) {
-        // Create a string from the buffer and trim potential newline characters
-       // std::string command(buffer, bytesRead);
-     //   command.erase(std::remove(command.begin(), command.end(), '\n'), command.end());
-   //     command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
+//    while ((bytesRead = recv(clientSocket, buffer, 1024, 0)) > 0) {
+//         //Create a string from the buffer and trim potential newline characters
+//        std::string command(buffer, bytesRead);
+//        command.erase(std::remove(command.begin(), command.end(), '\n'), command.end());
+//        command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
 
-        // Debug print the trimmed command
- //       std::cout << "Received command: [" << command << "]" << std::endl;
+        //Debug print the trimmed command
+//        std::cout << "Received command: [" << command << "]" << std::endl;
 
-        //if (command == "ping") {
-      //      std::string response = "pong\n";
-    //        send(clientSocket, response.c_str(), response.length(), 0);
-  //      } else if (command == "quit") {
-  //          break;
- //       } else {
- //           std::string response = "Unknown command\n";
- //           send(clientSocket, response.c_str(), response.length(), 0);
- //       }
- //   }
+//        if (command == "ping") {
+//            std::string response = "pong\n";
+//            send(clientSocket, response.c_str(), response.length(), 0);
+//        } else if (command == "quit") {
+//            break;
+//        } else {
+//            std::string response = "Unknown command\n";
+//            send(clientSocket, response.c_str(), response.length(), 0);
+//        }
+//    }
 
- //   close(clientSocket);
+//    close(clientSocket);
 //}
 
-void CommTCPComponent::handleClient(int clientSocket) {
-    cv::Mat testImage = cv::imread("/home/dms/DMS/Images/PHOTO-2024-03-03-20-10-22.jpg");
-    std::vector<uchar> buffer;
-    cv::imencode(".jpg", testImage, buffer);
-    auto bufferSize = buffer.size();
-    
-    send(clientSocket, &bufferSize, sizeof(bufferSize), 0);
-    send(clientSocket, buffer.data(), buffer.size(), 0);
+//----------------------------------image check----------------------------------------------
 
+//void CommTCPComponent::handleClient(int clientSocket) {
+//    cv::Mat testImage = cv::imread("/home/anas/DMS-main/Images/PHOTO-2024-03-03-20-10-22.jpg");
+//    std::vector<uchar> buffer;
+//    cv::imencode(".jpeg", testImage, buffer);
+//    //auto bufferSize = buffer.size();
+//    auto bufferSize = htonl(buffer.size()); // Convert to network byte order
+//    send(clientSocket, &bufferSize, sizeof(bufferSize), 0);
+//    send(clientSocket, buffer.data(), buffer.size(), 0);
+
+//    close(clientSocket);
+//}
+
+//----------------------------------frames check----------------------------------------------
+
+void CommTCPComponent::handleClient(int clientSocket) {
+    cv::Mat frame;
+    while (running) {
+        if (outputQueue.tryPop(frame) && !frame.empty()) {
+           std::vector<uchar> buffer;
+            cv::imencode(".jpg", frame, buffer);
+            //auto bufferSize = buffer.size();
+            auto bufferSize = htonl(buffer.size()); // Convert to network byte order
+            send(clientSocket, &bufferSize, sizeof(bufferSize), 0);
+            send(clientSocket, buffer.data(), buffer.size(), 0);
+        }
+    }
     close(clientSocket);
 }
-
 
 
