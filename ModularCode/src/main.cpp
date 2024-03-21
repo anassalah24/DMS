@@ -8,11 +8,14 @@ int main() {
     ThreadSafeQueue<cv::Mat> preprocessingQueue;
     ThreadSafeQueue<cv::Mat> faceDetectionQueue;  // Queue for face detection output
     ThreadSafeQueue<cv::Mat> tcpOutputQueue;      // Queue for TCP output, if needed
+    ThreadSafeQueue<CarState> stateOutputQueue;      // Queue for TCP output, if needed
+    ThreadSafeQueue<int> postOutputQueue;
+
 
     int tcpPort = 12345;  // Define the TCP port for the server
 
     // Initialize the DMSManager with all necessary queues and the TCP port
-    DMSManager dmsManager(cameraQueue, preprocessingQueue, faceDetectionQueue, tcpOutputQueue, tcpPort);
+    DMSManager dmsManager(cameraQueue, preprocessingQueue, faceDetectionQueue, tcpOutputQueue, tcpPort, stateOutputQueue, postOutputQueue);
 
     // Initialize the camera component
     if (!dmsManager.initializeCamera("/dev/video0")) {  // or use a video file path
@@ -26,6 +29,11 @@ int main() {
         return -1;
     }
 
+    //if (!dmsManager.initializeVehicleState("/home/anas/DMS-main/Car_Configuraion.txt","/home/anas/DMS-main/Car_Configuraion.txt")) {
+    //    std::cerr << "Failed to initialize vehicle state component." << std::endl;
+    //    return -1;
+    //}
+
     // Start the system
     if (!dmsManager.startSystem()) {
         std::cerr << "Failed to start the system." << std::endl;
@@ -36,7 +44,7 @@ int main() {
     cv::Mat cameraFrame, preprocessedFrame, faceDetectedFrame;
     while (true) {
         //if (cameraQueue.tryPop(cameraFrame) && !cameraFrame.empty()) {
-        //    cv::imshow("Camera Frame", cameraFrame);
+        //   cv::imshow("Camera Frame", cameraFrame);
         //}
 
         //if (preprocessingQueue.tryPop(preprocessedFrame) && !preprocessedFrame.empty()) {

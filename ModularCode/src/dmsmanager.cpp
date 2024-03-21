@@ -1,7 +1,7 @@
 #include "dmsmanager.h"
 
-DMSManager::DMSManager(ThreadSafeQueue<cv::Mat>& cameraQueue, ThreadSafeQueue<cv::Mat>& preprocessingQueue, ThreadSafeQueue<cv::Mat>& faceDetectionQueue,ThreadSafeQueue<cv::Mat>& tcpOutputQueue, int tcpPort)
-: cameraComponent(cameraQueue), preprocessingComponent(cameraQueue, preprocessingQueue), faceDetectionComponent(cameraQueue, faceDetectionQueue), tcpComponent(tcpPort, faceDetectionQueue), cameraQueue(cameraQueue), preprocessingQueue(preprocessingQueue), faceDetectionQueue(faceDetectionQueue), tcpPort(tcpPort), running(false) {}//change back the tcp queue
+DMSManager::DMSManager(ThreadSafeQueue<cv::Mat>& cameraQueue, ThreadSafeQueue<cv::Mat>& preprocessingQueue, ThreadSafeQueue<cv::Mat>& faceDetectionQueue,ThreadSafeQueue<cv::Mat>& tcpOutputQueue, int tcpPort , ThreadSafeQueue<CarState>& stateOutputQueue , ThreadSafeQueue<int>& postOutputQueue )
+: cameraComponent(cameraQueue), preprocessingComponent(cameraQueue, preprocessingQueue), faceDetectionComponent(cameraQueue, faceDetectionQueue), tcpComponent(tcpPort, faceDetectionQueue),vehicleStateManager(stateOutputQueue),postProcessingComponent(stateOutputQueue, postOutputQueue), cameraQueue(cameraQueue), preprocessingQueue(preprocessingQueue), faceDetectionQueue(faceDetectionQueue), tcpPort(tcpPort),stateOutputQueue(stateOutputQueue),postOutputQueue(postOutputQueue),running(false) {}//change back the tcp queue
 
 DMSManager::~DMSManager() {
     stopSystem();  // Ensure all components and threads are stopped and cleaned up properly
@@ -13,9 +13,12 @@ bool DMSManager::startSystem() {
     running = true;
 
     cameraThread = std::thread(&DMSManager::cameraLoop, this);  // Start the camera loop in its own thread
-    preprocessingThread = std::thread(&DMSManager::preprocessingLoop, this);  // Start the preprocessing loop in its own thread
+    //preprocessingThread = std::thread(&DMSManager::preprocessingLoop, this);  // Start the preprocessing loop in its own thread
     faceDetectionThread = std::thread(&DMSManager::faceDetectionLoop, this);  // Start face detection in its own thread
     tcpThread = std::thread(&DMSManager::commtcpLoop, this);
+    
+    vehicleStateThread = std::thread(&DMSManager::vehicleStateLoop, this);
+    postProcessingThread = std::thread(&DMSManager::postprocessingLoop, this);
     return true;
 }
 
@@ -23,7 +26,7 @@ void DMSManager::stopSystem() {
     running = false;  // Signal all loops to stop
 
     if (cameraThread.joinable()) cameraThread.join();
-    if (preprocessingThread.joinable()) preprocessingThread.join();
+    //if (preprocessingThread.joinable()) preprocessingThread.join();
     if (faceDetectionThread.joinable()) faceDetectionThread.join();  // Ensure the face detection thread is joined
     tcpComponent.stopServer();  // Stop the TCP server
 
@@ -44,6 +47,18 @@ void DMSManager::faceDetectionLoop() {
 void DMSManager::commtcpLoop() {
     tcpComponent.startServer();
 }
+
+void DMSManager::vehicleStateLoop() {
+    vehicleStateManager.startStateManager();
+}
+
+void DMSManager::postprocessingLoop(){
+    postProcessingComponent.postProcess();
+}
+
+
+
+
 bool DMSManager::initializeCamera(const std::string& source) {
     return cameraComponent.initialize(source);
 }
@@ -52,5 +67,7 @@ bool DMSManager::initializeFaceDetection(const std::string& modelConfiguration, 
     return faceDetectionComponent.initialize(modelConfiguration, modelWeights);
 }
 
+// bool DMSManager::initializeVehicleState(const std::string& steeringFilePath, const std::string& velocityFilePath) {
+//     vehicleStateManager.parseCarState(steeringFilePath);
 // Implement any additional methods required for managing the TCP component
 

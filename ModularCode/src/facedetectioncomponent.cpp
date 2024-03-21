@@ -52,7 +52,7 @@ void FaceDetectionComponent::detectFaces(cv::Mat& frame) {
     std::vector<cv::Mat> outs;
     net.forward(outs, net.getUnconnectedOutLayersNames());
 
-    float confThreshold = 0.7;// Confidence threshold
+    float confThreshold = 0.8;// Confidence threshold
     for (const auto& out : outs) {
         for (int i = 0; i < out.rows; ++i) {
             const float* detection = out.ptr<float>(i);
