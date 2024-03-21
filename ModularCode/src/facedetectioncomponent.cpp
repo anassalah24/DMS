@@ -40,6 +40,7 @@ void FaceDetectionComponent::detectionLoop() {
         if (inputQueue.tryPop(frame)) {
             detectFaces(frame);
             outputQueue.push(frame);
+	    //std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<< std::endl;
         }
     }
 }

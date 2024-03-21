@@ -38,11 +38,27 @@ void BasicPreprocessingComponent::processingLoop() {
 }
 
 cv::Mat BasicPreprocessingComponent::preprocessFrame(const cv::Mat& frame) {
-    cv::Mat processedFrame;
-    // Example preprocessing step: convert to grayscale
-    cv::cvtColor(frame, processedFrame, cv::COLOR_BGR2GRAY);
-    // Add more preprocessing steps as needed
 
-    return processedFrame;
+  cv::Mat processedFrame;
+
+  // Define the desired crop size
+  int crop_width = 350; // Replace with your desired width
+  int crop_height = 350; // Replace with your desired height
+
+  // Get the original image height and width
+  int original_height = frame.rows;
+  int original_width = frame.cols;
+
+  // Calculate the starting coordinates for centering the crop
+  int start_x = (original_width - crop_width) / 2;
+  int start_y = (original_height - crop_height) / 2;
+
+  // Perform cropping using ROI (Region of Interest)
+  cv::Rect roi(start_x, start_y, crop_width, crop_height);
+  processedFrame = frame(roi);  // Extract the ROI into processedFrame
+
+  // Add more preprocessing steps as needed (e.g., grayscale conversion)
+
+  return processedFrame;
 }
 

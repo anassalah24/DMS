@@ -13,6 +13,8 @@ struct CarState {
     bool blinkersOn;
 };
 
+#define TEXT_FILE_LOCATION	"/home/dms/Downloads/DMS-main/Car_Configuraion.txt"
+
 class VehicleStateManager {
 public:
     VehicleStateManager(ThreadSafeQueue<CarState>& outputQueue);
@@ -25,6 +27,8 @@ public:
 
     // Getters for CarState might be useful for accessing the parsed data
     CarState getCarState() const;
+    
+
 
 private:
     CarState state;

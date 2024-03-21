@@ -24,7 +24,7 @@ int main() {
     }
 
     // Initialize the face detection component
-    if (!dmsManager.initializeFaceDetection("/home/anas/DMS-main/ModularCode/modelconfigs/face-yolov3-tiny.cfg", "/home/anas/DMS-main/ModularCode/modelconfigs/face-yolov3-tiny_41000.weights")) {
+    if (!dmsManager.initializeFaceDetection("/home/dms/Downloads/DMS-main/ModularCode/modelconfigs/face-yolov3-tiny.cfg", "/home/dms/Downloads/DMS-main/ModularCode/modelconfigs/face-yolov3-tiny_41000.weights")) {
         std::cerr << "Failed to initialize face detection component." << std::endl;
         return -1;
     }
@@ -44,7 +44,7 @@ int main() {
     cv::Mat cameraFrame, preprocessedFrame, faceDetectedFrame;
     while (true) {
         //if (cameraQueue.tryPop(cameraFrame) && !cameraFrame.empty()) {
-        //   cv::imshow("Camera Frame", cameraFrame);
+         //  cv::imshow("Camera Frame", cameraFrame);
         //}
 
         //if (preprocessingQueue.tryPop(preprocessedFrame) && !preprocessedFrame.empty()) {
@@ -52,10 +52,10 @@ int main() {
         //}
 
         //if (faceDetectionQueue.tryPop(faceDetectedFrame) && !faceDetectedFrame.empty()) {
-        //    cv::imshow("Face Detection", faceDetectedFrame);
+        //   cv::imshow("Face Detection", faceDetectedFrame);
         //}
 
-        //if (cv::waitKey(1) == 27) break;  // Exit on ESC key
+        if (cv::waitKey(1) == 27) break;  // Exit on ESC key
     }
 
     // Shutdown the system

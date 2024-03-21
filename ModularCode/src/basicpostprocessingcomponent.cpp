@@ -127,7 +127,7 @@ int16_t PostProcessingComponent::eyeGazeCheck(EyeGaze& eye_gaze, int16_t car_dir
         case EYEGAZE_DASHBOARD  :
             /* Check again after 2 seconds */
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_2S));
-            parseEyeGaze("/home/anas/DMS-main/Car_Configuraion.txt");
+            parseEyeGaze(TEXT_FILE_LOCATION);
             if(eye_gaze.eyeGazeZone==EYEGAZE_FRONT)
             {
                 return NO_ALERT;
@@ -140,7 +140,7 @@ int16_t PostProcessingComponent::eyeGazeCheck(EyeGaze& eye_gaze, int16_t car_dir
         default:    /* eye gaze not in any secondary zone */
             /* Check again after 0.5 seconds */
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_500MS));
-            parseEyeGaze("/home/anas/DMS-main/Car_Configuraion.txt");
+            parseEyeGaze(TEXT_FILE_LOCATION);
             if(eye_gaze.eyeGazeZone==EYEGAZE_FRONT)
             {
                 return NO_ALERT;
@@ -163,7 +163,7 @@ int16_t PostProcessingComponent::eyeGazeCheck(EyeGaze& eye_gaze, int16_t car_dir
         case EYEGAZE_REARMIRROR :
             /* Check again after 1.5 seconds */
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_1500MS));
-            parseEyeGaze("/home/anas/DMS-main/Car_Configuraion.txt");
+            parseEyeGaze(TEXT_FILE_LOCATION);
             if(eye_gaze.eyeGazeZone==EYEGAZE_RIGHTMIRROR)
             {
                 return NO_ALERT;
@@ -179,7 +179,7 @@ int16_t PostProcessingComponent::eyeGazeCheck(EyeGaze& eye_gaze, int16_t car_dir
         default:    /* eye gaze not in any secondary zone */
             /* Check again after 0.5 seconds */
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_500MS));
-            parseEyeGaze("/home/anas/DMS-main/Car_Configuraion.txt");
+            parseEyeGaze(TEXT_FILE_LOCATION);
             if(eye_gaze.eyeGazeZone==EYEGAZE_RIGHTMIRROR)
             {
                 return NO_ALERT;
@@ -201,7 +201,7 @@ int16_t PostProcessingComponent::eyeGazeCheck(EyeGaze& eye_gaze, int16_t car_dir
         case EYEGAZE_REARMIRROR :
             /* Check again after 1.5 seconds */
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_1500MS));
-            parseEyeGaze("/home/anas/DMS-main/Car_Configuraion.txt");
+            parseEyeGaze(TEXT_FILE_LOCATION);
                         
             if(eye_gaze.eyeGazeZone==EYEGAZE_LEFTMIRROR)
             {
@@ -218,7 +218,7 @@ int16_t PostProcessingComponent::eyeGazeCheck(EyeGaze& eye_gaze, int16_t car_dir
         default:    /* eye gaze not in any secondary zone */
             /* Check again after 0.5 seconds */
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_500MS));
-            parseEyeGaze("/home/anas/DMS-main/Car_Configuraion.txt");
+            parseEyeGaze(TEXT_FILE_LOCATION);
             if(eye_gaze.eyeGazeZone==EYEGAZE_LEFTMIRROR)
             {
                 return NO_ALERT;
@@ -258,7 +258,7 @@ int16_t PostProcessingComponent::makeDecision(const CarState& state, EyeGaze& ey
             {
                 /* Check again after 0.5 seconds */
                 std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_500MS));
-                parseHeadPose("/home/anas/DMS-main/Car_Configuraion.txt");
+                parseHeadPose(TEXT_FILE_LOCATION);
                            
                 if(head_pose.headPoseAngle == HEADPOSE_STRAIGHT)
                 {
@@ -283,7 +283,7 @@ int16_t PostProcessingComponent::makeDecision(const CarState& state, EyeGaze& ey
             {
                 /* Check again after 0.5 seconds */
                 std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_500MS));
-                parseHeadPose("/home/anas/DMS-main/Car_Configuraion.txt");
+                parseHeadPose(TEXT_FILE_LOCATION);
                 if(head_pose.headPoseAngle==HEADPOSE_STRAIGHT || head_pose.headPoseAngle==HEADPOSE_RIGHT)
                 {
                     return eyeGazeCheck(eye_gaze,DIRECTION_RIGHT);
@@ -307,7 +307,7 @@ int16_t PostProcessingComponent::makeDecision(const CarState& state, EyeGaze& ey
             {
                 /* Check again after 0.5 seconds */
                 std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_500MS));
-                parseHeadPose("/home/anas/DMS-main/Car_Configuraion.txt");
+                parseHeadPose(TEXT_FILE_LOCATION);
                 if(head_pose.headPoseAngle==HEADPOSE_STRAIGHT || head_pose.headPoseAngle==HEADPOSE_LEFT)
                 {
                     return eyeGazeCheck(eye_gaze,DIRECTION_LEFT);
@@ -327,7 +327,7 @@ int16_t PostProcessingComponent::makeDecision(const CarState& state, EyeGaze& ey
 
 void PostProcessingComponent::postLoop(){
     CarState carstate;
-    const std::string FilePath = "/home/anas/DMS-main/Car_Configuraion.txt";
+    const std::string FilePath = TEXT_FILE_LOCATION;
 
     while (running)
     {

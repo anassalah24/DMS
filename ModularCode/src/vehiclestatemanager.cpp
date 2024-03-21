@@ -66,7 +66,7 @@ CarState VehicleStateManager::getCarState() const {
 void VehicleStateManager::stateLoop() {
     while (running) {
         // Specify the paths to the files where new data is periodically written
-        const std::string FilePath = "/home/anas/DMS-main/Car_Configuraion.txt";
+        const std::string FilePath = TEXT_FILE_LOCATION;
 
         // Call parseCarState to update the vehicle state based on new data
         parseCarState(FilePath);
